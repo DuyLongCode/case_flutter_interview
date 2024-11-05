@@ -128,14 +128,17 @@ bool isFilePicked = false;
   return '';
 }
 
-  Future<String> getMacOSDocumentDirectory() async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
+
+
+
+Future<String> getDocumentsDirectoryPath() async {
+  final directory = await getApplicationDocumentsDirectory();
+  return directory.path;
+}
 
   Future<String> saveImage() async {
     // _image=_pickImage() as File;
-    final String documentDirectory = await getMacOSDocumentDirectory();
+    final String documentDirectory = await getDocumentsDirectoryPath();
     String destinationPath = documentDirectory + '/dataImages';
     final imageDirectory = Directory(destinationPath);
     if (!await imageDirectory.exists()) {
