@@ -95,7 +95,11 @@ class GridViewHomeState extends State<GridViewHome> {
 }
   @override
   Widget build(BuildContext context) {
+    double widthOfView = MediaQuery.of(context).size.width;
+    
     return RefreshIndicator(
+        triggerMode:RefreshIndicatorTriggerMode.anywhere,
+        edgeOffset: 20,
         onRefresh: fetchProducts,
         child: FutureBuilder<ApiResponse>(
           future: widget.futureData,
@@ -120,12 +124,8 @@ class GridViewHomeState extends State<GridViewHome> {
                   await _processProductList(apiProducts);
                 });
               }
-       
-            //  setState(() {
-            //    createButtonState.pickImage();
-            //  });
+              _products.addAll(apiProducts);
               return Consumer<DataImageProvider>(
-                
                 builder: (context, dataImageProvider, child) {
                   if (_products.isEmpty) {
                     return const Center(
@@ -199,8 +199,8 @@ class GridViewHomeState extends State<GridViewHome> {
                                   children: [
                                     Text(
                                       product['names'] as String,
-                                      style: const TextStyle(
-                                        fontSize: 14,
+                                      style: TextStyle(
+                                        fontSize:widthOfView*0.02,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
@@ -209,8 +209,8 @@ class GridViewHomeState extends State<GridViewHome> {
                                     ),
                                     Text(
                                       '${product['prices']} đ',
-                                      style: const TextStyle(
-                                        fontSize: 14,
+                                      style: TextStyle(
+                                        fontSize: widthOfView*0.02,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),

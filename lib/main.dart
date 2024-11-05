@@ -69,11 +69,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final double appWidth = sizeApp.width;
     final double appHeight = sizeApp.height;
 
-    return Provider(
-      create: (context) => DatabaseHelper(),
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => DatabaseHelper()),
+      ChangeNotifierProvider(create:(context)=>DataImageProvider())
+      ],
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Product List'),
+          title: const Text('Thêm bớt sản phẩm'),
         ),
        body: SingleChildScrollView(
           child: Column(
