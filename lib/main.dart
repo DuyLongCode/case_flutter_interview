@@ -3,31 +3,40 @@ import 'package:case_flutter_interview/model/sqlitedb.dart';
 
 import 'package:case_flutter_interview/pages/createButton.dart';
 import 'package:case_flutter_interview/pages/gridView.dart';
+import 'package:case_flutter_interview/themes/themeMode.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:case_flutter_interview/model/models.dart';
 import 'package:provider/provider.dart';
 
+
 void main() {
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  MyApp({super.key});
+  ThemeModeManager themeMode = ThemeModeManager();
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create:(context)=>DataImageProvider(),
-      child: MaterialApp(
+    return MultiProvider(
+      providers: [
+      ChangeNotifierProvider(create: (context) => DataImageProvider()),
+      ChangeNotifierProvider(create: (context) => ThemeModeManager()),
+      ],
+      child: Consumer<ThemeModeManager>(
+      builder: (context, themeMode, child) {
+        return MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: lightMode,
+        darkTheme: darkMode,
+        themeMode: themeMode.isDark ? ThemeMode.dark : ThemeMode.light,
         home: const MyHomePage(),
         debugShowCheckedModeBanner: false,
+        );
+      },
       ),
     );
   }
@@ -68,14 +77,17 @@ class _MyHomePageState extends State<MyHomePage> {
     final sizeApp = MediaQuery.of(context).size;
     final double appWidth = sizeApp.width;
     final double appHeight = sizeApp.height;
-
+    var themeMode = Provider.of<ThemeModeManager>(context);
     return MultiProvider(
+      
       providers: [ChangeNotifierProvider(create: (context) => DatabaseHelper()),
-      ChangeNotifierProvider(create:(context)=>DataImageProvider())
+  
+     
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Thêm bớt sản phẩm'),
+          title: Text('Quản lý sản phẩm', style: TextStyle(color: themeMode.isDark ? darkMode.primaryColor : lightMode.primaryColor)),
+          actions: [SwitchTheme(themeMode: themeMode),],
         ),
        body: SingleChildScrollView(
           child: Column(
@@ -89,6 +101,30 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class SwitchTheme extends StatelessWidget {
+  const SwitchTheme({
+    super.key,
+    required this.themeMode,
+  });
+
+  final ThemeModeManager themeMode;
+
+  @override
+  Widget build(BuildContext context) {
+    return Switch(
+      value: themeMode.isDark, 
+      onChanged: (value) {
+      themeMode.toggleTheme();
+      },
+      inactiveTrackColor: themeMode.isDark ? darkMode.primaryColor : lightMode.primaryColor,
+      focusColor: themeMode.isDark ? darkMode.primaryColor : lightMode.primaryColor, 
+      activeColor: themeMode.isDark ? darkMode.primaryColor : lightMode.primaryColor,
+      inactiveThumbColor: Colors.black,
+      thumbColor: MaterialStateProperty.all(Colors.black)
     );
   }
 }

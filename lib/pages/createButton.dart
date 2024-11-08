@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:case_flutter_interview/model/dataImageProvider.dart';
 import 'package:case_flutter_interview/model/sqlitedb.dart';
+import 'package:case_flutter_interview/themes/themeMode.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -153,6 +154,7 @@ Future<String> getDocumentsDirectoryPath() async {
 
   @override
 Widget build(BuildContext context) {
+  var themeModeManager=Provider.of<ThemeModeManager>(context);
   return Consumer<DataImageProvider>(
     builder: (context, listImageData, child) {
       return Form(
@@ -199,7 +201,7 @@ Widget build(BuildContext context) {
 
               // Image Selection Button
               TextButton.icon(
-                icon: const Icon(Icons.image),
+                icon: const Icon(Icons.image,color: Color.fromARGB(255, 66, 7, 184),),
                 label: Text(isFilePicked ? 'Đã chọn ảnh' : 'Chọn ảnh'),
                 onPressed: () async {
                   await pickImage();
@@ -211,9 +213,10 @@ Widget build(BuildContext context) {
              ElevatedButton(
   onPressed: _submitForm,
   style: ElevatedButton.styleFrom(
+    backgroundColor: themeModeManager.isDark ? darkMode.primaryColor : lightMode.primaryColor,
     minimumSize: const Size(double.infinity, 50),
   ),
-  child: const Text('Xác nhận'),
+  child:  Text('Xác nhận', style: TextStyle(color: themeModeManager.isDark ? darkMode.textTheme.bodyMedium?.color : lightMode.textTheme.bodyMedium?.color ),),
 ),
             ],
           ),

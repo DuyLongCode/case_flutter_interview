@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:case_flutter_interview/model/dataImageProvider.dart';
 import 'package:case_flutter_interview/model/sqlitedb.dart';
 import 'package:case_flutter_interview/pages/createButton.dart';
+import 'package:case_flutter_interview/themes/themeMode.dart';
 import 'package:flutter/material.dart';
 import 'package:case_flutter_interview/model/models.dart';
 import 'package:provider/provider.dart';
@@ -136,7 +137,7 @@ class GridViewHomeState extends State<GridViewHome> {
                     );
                   }
                   
-                  return GridView.builder(
+                    return GridView.builder(
                     padding: const EdgeInsets.all(8.0),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -149,81 +150,90 @@ class GridViewHomeState extends State<GridViewHome> {
                       final product = _products[index];
                       
                       return Card(
-                        elevation: 4.0,
-                        color: const Color.fromARGB(255, 4, 0, 47),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(8.0)
-                                ),
-                                child: (product['urls'] as String).startsWith('http')
-                                  ? Image.network(
-                                      product['urls'] as String,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return const Center(
-                                          child: Icon(
-                                            Icons.error,
-                                            color: Colors.red,
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : Image.file(
-                                      File(product['urls'] as String),
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return const Center(
-                                          child: Icon(
-                                            Icons.error,
-                                            color: Colors.red,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      product['names'] as String,
-                                      style: TextStyle(
-                                        fontSize:widthOfView*0.02,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Text(
-                                      '${product['prices']} đ',
-                                      style: TextStyle(
-                                        fontSize: widthOfView*0.02,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                      elevation: 4.0,
+                      color: const Color.fromARGB(255, 4, 0, 47),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: BorderSide(
+                          color: Provider.of<ThemeModeManager>(context).isDark 
+                            ? (lightMode.cardTheme.shape as RoundedRectangleBorder).side.color 
+                            : (darkMode.cardTheme.shape as RoundedRectangleBorder).side.color ,
+                          width: 2.0,
                         ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                        Expanded(
+                          flex: 3,
+                          child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(8.0)
+                          ),
+                          child: (product['urls'] as String).startsWith('http')
+                            ? Image.network(
+                              product['urls'] as String,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(
+                                Icons.error,
+                                color: Colors.red,
+                                ),
+                              );
+                              },
+                            )
+                            : Image.file(
+                              File(product['urls'] as String),
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(
+                                Icons.error,
+                                color: Colors.red,
+                                ),
+                              );
+                              },
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                       
+                         
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                            Text(
+                              product['names'] as String,
+                              style: TextStyle(
+                              fontSize: widthOfView * 0.02,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              '${product['prices']} đ',
+                              style: TextStyle(
+                              fontSize: widthOfView * 0.02,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              ),
+                            ),
+                            ],
+                          ),
+                          ),
+                   
+                        ],
+                      ),
                       );
                     },
-                  );
+                    );
                 },
               );
             }
