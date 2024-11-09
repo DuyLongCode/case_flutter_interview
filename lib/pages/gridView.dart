@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'package:case_flutter_interview/model/dataImageProvider.dart';
+import 'package:case_flutter_interview/model/gridviewSharedProvider.dart';
 import 'package:case_flutter_interview/model/sqlitedb.dart';
-import 'package:case_flutter_interview/pages/createButton.dart';
 import 'package:case_flutter_interview/themes/themeMode.dart';
 import 'package:flutter/material.dart';
 import 'package:case_flutter_interview/model/models.dart';
 import 'package:provider/provider.dart';
 
 class GridViewHome extends StatefulWidget {
-  const GridViewHome({
+  GridViewHome({
     super.key,
     required this.futureData,
   });
@@ -27,81 +27,81 @@ class GridViewHomeState extends State<GridViewHome> {
   @override
   void initState() {
     super.initState();
-
+    var gridViewSharedProvider=Provider.of<GridViewSharedProvider>(context,listen: false);
+    gridViewSharedProvider.fetchProducts();
   
-    fetchProducts();
   }
 
- Future<void> fetchProducts() async {
-  try {
-    final products = await _dbHelper.getProducts();
-    if (mounted) {
-      setState(() {
-        _products = List.from(products);
-      });
-    }
-  } catch (e) {
-    print('Error fetching products: $e');
-  }
-}
+//  Future<void> fetchProducts() async {
+//     try {
+//       final products = await _dbHelper.getProducts();
+//       _products = List.from(products);
+ 
+//     } catch (e) {
+//       print('Error fetching products: $e');
+//     }
+//   }
 
- Future<void> _addProduct(List<Map<String, dynamic>> products) async {
-    try {
-      await _dbHelper.insertData(products);
+
+//  Future<void> _addProduct(List<Map<String, dynamic>> products) async {
+//     try {
+//       await _dbHelper.insertData(products);
       
 
-      _products.addAll(products);  
-      if (mounted) {
-        setState(() {});
-      }
-    } catch (e) {
-      print('Error adding products: $e');
-    }
-}
+//       _products.addAll(products);  
+//       if (mounted) {
+//         setState(() {});
+//       }
+//     } catch (e) {
+//       print('Error adding products: $e');
+//     }
+// }
 
 
 
-  Future<void> _processProductList(List<Map<String, dynamic>> productList) async {
-    if (_hasProcessedData) return;
+//   Future<void> processProductList(List<Map<String, dynamic>> productList) async {
+//     if (_hasProcessedData) return;
 
-    try {
-      final dataImageProvider = Provider.of<DataImageProvider>(context, listen: false);
+//     try {
+//       final dataImageProvider = Provider.of<DataImageProvider>(context, listen: false);
       
-      dataImageProvider.updateProductList(productList.map((item) => ProductItem(
-        name: item['names'] as String,
-        price: item['prices'] as double,
-        imageSrc: item['urls'] as String,
-      )).toList());
+//       dataImageProvider.updateProductList(productList.map((item) => ProductItem(
+//         name: item['names'] as String,
+//         price: item['prices'] as double,
+//         imageSrc: item['urls'] as String,
+//       )).toList());
 
-      // await _addProduct(productList);
-      _products.addAll(productList);
+//       // await _addProduct(productList);
+//       _products.addAll(productList);
       
-      if (mounted) {
-        setState(() {
-          _hasProcessedData = true;
-        });
-      }
-    } catch (e) {
-      print('Error processing product list: $e');
-    }
-  }
+//       if (mounted) {
+//         setState(() {
+//           _hasProcessedData = true;
+//         });
+//       }
+  
+//     } catch (e) {
+//       print('Error processing product list: $e');
+//     }
+  
+//   }
 
-  void refreshGrid() async {
-  await fetchProducts(); //
-  if (mounted) {
-    setState(() {
+//   void refreshGrid() async {
+//   await fetchProducts(); //
+//   if (mounted) {
+//     setState(() {
 
-    });
-  }
-}
+//     });
+//   }
+// }
   @override
   Widget build(BuildContext context) {
     double widthOfView = MediaQuery.of(context).size.width;
-    
+    var gridViewSharedProvider=Provider.of<GridViewSharedProvider>(context);
     return RefreshIndicator(
         triggerMode:RefreshIndicatorTriggerMode.anywhere,
         edgeOffset: 20,
-        onRefresh: fetchProducts,
+        onRefresh: gridViewSharedProvider.fetchProducts,
         child: FutureBuilder<ApiResponse>(
           future: widget.futureData,
           builder: (context, snapshot) {
@@ -122,13 +122,14 @@ class GridViewHomeState extends State<GridViewHome> {
       
               if (!_hasProcessedData && apiProducts.isNotEmpty) {
                 WidgetsBinding.instance.addPostFrameCallback((_) async {
-                  await _processProductList(apiProducts);
+                  // await processProductList(apiProducts);
+                  await gridViewSharedProvider.processProductList(apiProducts, context);
                 });
               }
-              _products.addAll(apiProducts);
+              gridViewSharedProvider.finalProducts.addAll(apiProducts);
               return Consumer<DataImageProvider>(
                 builder: (context, dataImageProvider, child) {
-                  if (_products.isEmpty) {
+                  if ( gridViewSharedProvider.finalProducts.isEmpty) {
                     return const Center(
                       child: Text(
                         'No products available',
@@ -145,9 +146,9 @@ class GridViewHomeState extends State<GridViewHome> {
                       crossAxisSpacing: 8.0,
                       childAspectRatio: 0.75,
                     ),
-                    itemCount: _products.length,
+                    itemCount:  gridViewSharedProvider.finalProducts.length,
                     itemBuilder: (context, index) {
-                      final product = _products[index];
+                      final product =  gridViewSharedProvider.finalProducts[index];
                       
                       return Card(
                       elevation: 4.0,

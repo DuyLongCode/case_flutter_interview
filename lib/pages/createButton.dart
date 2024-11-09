@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:case_flutter_interview/model/dataImageProvider.dart';
+import 'package:case_flutter_interview/model/gridviewSharedProvider.dart';
 import 'package:case_flutter_interview/model/sqlitedb.dart';
 import 'package:case_flutter_interview/themes/themeMode.dart';
 import 'package:file_picker/file_picker.dart';
@@ -98,10 +99,10 @@ bool isFilePicked = false;
       });
 
    
-      if (context.mounted) {
-        final gridViewState = context.findAncestorStateOfType<GridViewHomeState>();
-        gridViewState?.refreshGrid();
-      }
+      // if (context.mounted) {
+      //   final gridViewState = context.findAncestorStateOfType<GridViewSharedProvider>();
+      //   gridViewState?.refreshGrid();
+      // }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Có lỗi xảy ra: ${e.toString()}')),
@@ -155,6 +156,7 @@ Future<String> getDocumentsDirectoryPath() async {
   @override
 Widget build(BuildContext context) {
   var themeModeManager=Provider.of<ThemeModeManager>(context);
+
   return Consumer<DataImageProvider>(
     builder: (context, listImageData, child) {
       return Form(
