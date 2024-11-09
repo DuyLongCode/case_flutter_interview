@@ -88,27 +88,20 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text('Quản lý sản phẩm', style: TextStyle(color: themeMode.isDark ? darkMode.appBarTheme.foregroundColor: lightMode.appBarTheme.foregroundColor)),
           actions: [
-            ElevatedButton.icon(
-              label: Text('Chế độ sáng/tối', style: TextStyle(color: themeMode.isDark ? darkMode.appBarTheme.foregroundColor: lightMode.appBarTheme.foregroundColor)),
-              onPressed: ()async{
-          await showMenu(
-            context: context,
-            position: RelativeRect.fromLTRB(100, 100, 0, 0),
-            items: [
-              PopupMenuItem(
-                child: StatefulBuilder(
-                  builder:(context,state){
-                    return Container(
-                    padding: const EdgeInsets.all(8),
-                    child: SwitchTheme(themeMode: themeMode),
-                  );
-                  }
-
-                ),
-              ),
-            ],
-          );
-})
+            PopupMenuButton<Row>(
+      icon: Icon(Icons.more_vert),
+      position: PopupMenuPosition.under,
+      itemBuilder: (BuildContext context) {
+        return [
+         PopupMenuItem(child: Row(children: [SwitchTheme(themeMode: themeMode)]),onTap: () => {
+            // themeMode.toggleTheme()
+         },)
+        ];
+      },
+    )
+              
+              
+          
            
           ],
         ),
@@ -128,20 +121,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class SwitchTheme extends StatelessWidget {
-  const SwitchTheme({
-    super.key,
-    required this.themeMode,
-  });
+class SwitchTheme extends StatefulWidget {
+  const SwitchTheme({super.key, required this.themeMode});
 
   final ThemeModeManager themeMode;
-
+  @override
+  // ignore: no_logic_in_create_state
+  State<SwitchTheme> createState() => SwitchThemeState(themeMode: themeMode);
+}
+class SwitchThemeState extends State<SwitchTheme> {
+  final ThemeModeManager themeMode;
+  SwitchThemeState({
+    required this.themeMode,
+  });
   @override
   Widget build(BuildContext context) {
     return Switch.adaptive(
       value: themeMode.isDark, 
       onChanged: (value) {
-      themeMode.toggleTheme();
+            setState(() {
+              widget.themeMode.toggleTheme();
+            });
+
       },
       inactiveTrackColor: themeMode.isDark ? darkMode.disabledColor : lightMode.disabledColor,
       focusColor: themeMode.isDark ? darkMode.primaryColor : lightMode.primaryColor, 
@@ -151,4 +152,9 @@ class SwitchTheme extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
 
