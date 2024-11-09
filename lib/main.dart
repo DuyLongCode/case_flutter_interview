@@ -86,8 +86,31 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Quản lý sản phẩm', style: TextStyle(color: themeMode.isDark ? darkMode.primaryColor : lightMode.primaryColor)),
-          actions: [SwitchTheme(themeMode: themeMode),],
+          title: Text('Quản lý sản phẩm', style: TextStyle(color: themeMode.isDark ? darkMode.appBarTheme.foregroundColor: lightMode.appBarTheme.foregroundColor)),
+          actions: [
+            ElevatedButton.icon(
+              label: Text('Chế độ sáng/tối', style: TextStyle(color: themeMode.isDark ? darkMode.appBarTheme.foregroundColor: lightMode.appBarTheme.foregroundColor)),
+              onPressed: ()async{
+          await showMenu(
+            context: context,
+            position: RelativeRect.fromLTRB(100, 100, 0, 0),
+            items: [
+              PopupMenuItem(
+                child: StatefulBuilder(
+                  builder:(context,state){
+                    return Container(
+                    padding: const EdgeInsets.all(8),
+                    child: SwitchTheme(themeMode: themeMode),
+                  );
+                  }
+
+                ),
+              ),
+            ],
+          );
+})
+           
+          ],
         ),
        body: SingleChildScrollView(
           child: Column(
@@ -115,16 +138,16 @@ class SwitchTheme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Switch(
+    return Switch.adaptive(
       value: themeMode.isDark, 
       onChanged: (value) {
       themeMode.toggleTheme();
       },
-      inactiveTrackColor: themeMode.isDark ? darkMode.primaryColor : lightMode.primaryColor,
+      inactiveTrackColor: themeMode.isDark ? darkMode.disabledColor : lightMode.disabledColor,
       focusColor: themeMode.isDark ? darkMode.primaryColor : lightMode.primaryColor, 
       activeColor: themeMode.isDark ? darkMode.primaryColor : lightMode.primaryColor,
-      inactiveThumbColor: Colors.black,
-      thumbColor: MaterialStateProperty.all(Colors.black)
+      // inactiveThumbColor: Colors.black, 
+    
     );
   }
 }

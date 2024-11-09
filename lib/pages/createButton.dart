@@ -201,7 +201,7 @@ Widget build(BuildContext context) {
 
               // Image Selection Button
               TextButton.icon(
-                icon: const Icon(Icons.image,color: Color.fromARGB(255, 66, 7, 184),),
+                icon: Icon(Icons.image,color: themeModeManager.isDark ? darkMode.indicatorColor : lightMode.indicatorColor ,),
                 label: Text(isFilePicked ? 'Đã chọn ảnh' : 'Chọn ảnh'),
                 onPressed: () async {
                   await pickImage();
@@ -213,7 +213,7 @@ Widget build(BuildContext context) {
              ElevatedButton(
   onPressed: _submitForm,
   style: ElevatedButton.styleFrom(
-    backgroundColor: themeModeManager.isDark ? darkMode.primaryColor : lightMode.primaryColor,
+    backgroundColor: themeModeManager.isDark ? darkMode.indicatorColor : lightMode.indicatorColor,
     minimumSize: const Size(double.infinity, 50),
   ),
   child:  Text('Xác nhận', style: TextStyle(color: themeModeManager.isDark ? darkMode.textTheme.bodyMedium?.color : lightMode.textTheme.bodyMedium?.color ),),
